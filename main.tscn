@@ -1,0 +1,18 @@
+[gd_scene load_steps=5 format=3 uid="uid://b3scmm5r6a23q"]
+
+[ext_resource type="Script" uid="uid://mwio0eujos2s" path="res://main.gd" id="1_ig7tw"]
+[ext_resource type="Script" uid="uid://bwqpovn6r5q7q" path="res://metronome.gd" id="2_0xm2m"]
+[ext_resource type="AudioStream" uid="uid://c2b3dcgll0ae4" path="res://track.ogg" id="2_1bvp3"]
+[ext_resource type="AudioStream" uid="uid://j8yec16ugbbv" path="res://Perc_MetronomeQuartz_hi.wav" id="3_lquwl"]
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1_ig7tw")
+
+[node name="Song" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_1bvp3")
+volume_db = -18.0
+
+[node name="Metronome" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_lquwl")
+max_polyphony = 2
+script = ExtResource("2_0xm2m")
