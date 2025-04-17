@@ -4,7 +4,7 @@ extends AudioStreamPlayer
 
 var _running: bool = false
 var _start_absolute_time: float = 0
-var _next_tick_time: float = -1
+var _scheduled_time: float = -1
 
 
 # Called when the node enters the scene tree for the first time.
@@ -17,16 +17,16 @@ func _process(delta: float) -> void:
 	if not _running:
 		return
 	
-	var curr_time = Time.get_ticks_usec() / 1000000.0
-	if curr_time >= _next_tick_time:
+	var curr_time = AudioServer.get_absolute_time()
+	if curr_time > _scheduled_time:
 		var beat_time = 60 / bpm
-		var next_tick = ceil((curr_time + 0.001 - _start_absolute_time) / beat_time)
-		_next_tick_time = _start_absolute_time + next_tick * beat_time
-		play()
-		print("playing: ", _next_tick_time, " ", next_tick)
+		var next_tick = ceil((curr_time - _start_absolute_time) / beat_time)
+		_scheduled_time = _start_absolute_time + next_tick * beat_time
+		play_scheduled(_scheduled_time)
+		print("scheduling tick: ", _scheduled_time, " ", next_tick)
 
 
 func start(start_absolute_time: float) -> void:
 	_running = true
 	_start_absolute_time = start_absolute_time
-	_next_tick_time = start_absolute_time
+	_scheduled_time = start_absolute_time - 60 / bpm

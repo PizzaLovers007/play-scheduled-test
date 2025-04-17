@@ -1,22 +1,74 @@
 extends Node2D
 
-const metronome_resource = preload("res://Perc_MetronomeQuartz_hi.wav")
+const SONG_VOLUME_DB = -18
+
+@onready var _master_bus_index = AudioServer.get_bus_index("Master")
+
+var _tween: Tween
+var _scheduled_song_time: float
 
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	AudioServer.register_stream_as_sample(metronome_resource)
+	_update_max_fps(200)
 	
-	#var curr_time = AudioServer.get_absolute_time()
-	var curr_time = Time.get_ticks_usec() / 1000000.0
-	print("starting at ", curr_time+1)
-	#$Song.play_scheduled(curr_time + 1)
+	$SongScheduled.volume_linear = 0
+	$MetronomeScheduled.volume_linear = 0
+	
+	var scheduled_song_start_time = AudioServer.get_absolute_time() + 1
+	print("Scheduled song starting at ", scheduled_song_start_time)
+	$SongScheduled.play_scheduled(scheduled_song_start_time)
+	$MetronomeScheduled.start(scheduled_song_start_time)
+	_scheduled_song_time = scheduled_song_start_time
+	
+	await get_tree().create_timer(1).timeout
+	
+	var sys_time = Time.get_ticks_usec() / 1000000.0
 	$Song.play()
-	$Metronome.start(curr_time + 1)
-	pass # Replace with function body.
+	$Metronome.start(sys_time)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	#print("Current absolute time: ", AudioServer.get_absolute_time())
+	var abs_time = AudioServer.get_absolute_time()
+	if abs_time > _scheduled_song_time:
+		_scheduled_song_time += 60 / 130.0 * 32
+		$SongScheduled.play_scheduled(_scheduled_song_time)
 	pass
+
+
+func _update_max_fps(max_fps: int) -> void:
+	Engine.max_fps = max_fps
+	ProjectSettings.set("application/run/max_fps", max_fps)
+	$Control/VBoxContainer/MaxFps/CenterContainer/HSlider.value = max_fps
+	$Control/VBoxContainer/MaxFps/SpinBox.value = max_fps
+
+
+func _on_max_fps_h_slider_value_changed(value: float) -> void:
+	_update_max_fps(int(value))
+
+
+func _on_max_fps_spin_box_value_changed(value: float) -> void:
+	_update_max_fps(int(value))
+
+
+func _on_use_play_scheduled_check_button_toggled(toggled_on: bool) -> void:
+	if _tween:
+		_tween.kill()
+	
+	if toggled_on:
+		_tween = create_tween().parallel()
+		_tween.tween_property($Song, "volume_linear", 0, 0.2)
+		_tween.tween_property($Metronome, "volume_linear", 0, 0.2)
+		_tween.tween_property($SongScheduled, "volume_linear", db_to_linear(SONG_VOLUME_DB), 0.2)
+		_tween.tween_property($MetronomeScheduled, "volume_linear", 1, 0.2)
+	else:
+		_tween = create_tween().parallel()
+		_tween.tween_property($SongScheduled, "volume_linear", 0, 0.2)
+		_tween.tween_property($MetronomeScheduled, "volume_linear", 0, 0.2)
+		_tween.tween_property($Song, "volume_linear", db_to_linear(SONG_VOLUME_DB), 0.2)
+		_tween.tween_property($Metronome, "volume_linear", 1, 0.2)
+
+
+func _on_volume_h_slider_value_changed(value: float) -> void:
+	AudioServer.set_bus_volume_linear(_master_bus_index, value)
