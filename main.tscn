@@ -123,6 +123,17 @@ max_value = 2.0
 step = 0.1
 value = 1.0
 
+[node name="TimeLabels" type="VBoxContainer" parent="Control/VBoxContainer"]
+layout_mode = 2
+
+[node name="TicksLabel" type="Label" parent="Control/VBoxContainer/TimeLabels"]
+layout_mode = 2
+text = "Game Time: 0"
+
+[node name="AbsTimeLabel" type="Label" parent="Control/VBoxContainer/TimeLabels"]
+layout_mode = 2
+text = "Audio Time: 0"
+
 [connection signal="toggled" from="Control/VBoxContainer/UsePlayScheduled/CheckButton" to="." method="_on_use_play_scheduled_check_button_toggled"]
 [connection signal="value_changed" from="Control/VBoxContainer/MaxFps/CenterContainer/HSlider" to="." method="_on_max_fps_h_slider_value_changed"]
 [connection signal="value_changed" from="Control/VBoxContainer/MaxFps/SpinBox" to="." method="_on_max_fps_spin_box_value_changed"]

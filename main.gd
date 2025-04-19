@@ -29,6 +29,11 @@ func _ready() -> void:
 
 func _process(_delta: float) -> void:
 	var abs_time = AudioServer.get_absolute_time()
+	var game_time = Time.get_ticks_usec() / 1000000.0
+	
+	$Control/VBoxContainer/TimeLabels/TicksLabel.text = "Game Time: %.4f" % game_time
+	$Control/VBoxContainer/TimeLabels/AbsTimeLabel.text = "Audio Time: %.4f" % abs_time
+	
 	if abs_time > _scheduled_song_time:
 		_scheduled_song_time += 60 / 130.0 * 32
 		$SongScheduled.play_scheduled(_scheduled_song_time)
