@@ -11,13 +11,17 @@ func _process(_delta: float) -> void:
 	if not _running:
 		return
 	
+	# Play the metronome tick once it is time to play it. Note that since the
+	# song loop is not perfect, the metronome will eventually drift out of sync.
 	var curr_time = Time.get_ticks_usec() / 1000000.0
 	if curr_time >= _next_tick_time:
+		play()
+		
+		# Calculate time for the next tick.
 		var beat_time = 60 / bpm
 		var next_tick = ceil((curr_time + 0.001 - _start_absolute_time) / beat_time)
 		_next_tick_time = _start_absolute_time + next_tick * beat_time
-		play()
-		print("playing: ", _next_tick_time, " ", next_tick)
+		print("playing tick: ", _next_tick_time, " ", next_tick)
 
 
 func start(start_absolute_time: float) -> void:

@@ -2,26 +2,40 @@ extends Node2D
 
 const SONG_VOLUME_DB = -18
 
+@export_category("Song Settings")
+@export var bpm: float = 130
+@export var song_length_beats: int = 32
+
+@export_category("Nodes")
+@export var max_fps_slider: HSlider
+@export var max_fps_spinbox: SpinBox
+@export var game_time_label: Label
+@export var audio_time_label: Label
+
 @onready var _master_bus_index = AudioServer.get_bus_index("Master")
 
 var _tween: Tween
+var _scheduled_song_start_time: float
 var _scheduled_song_time: float
 
 
 func _ready() -> void:
 	_update_max_fps(200)
 	
+	# Both scheduled and non-scheduled players run simultaneously, but only one
+	# set is playing audio at a time. By default, the scheduled players are muted.
 	$SongScheduled.volume_linear = 0
 	$MetronomeScheduled.volume_linear = 0
 	
-	var scheduled_song_start_time = AudioServer.get_absolute_time() + 1
-	print("Scheduled song starting at ", scheduled_song_start_time)
-	$SongScheduled.play_scheduled(scheduled_song_start_time)
-	$MetronomeScheduled.start(scheduled_song_start_time)
-	_scheduled_song_time = scheduled_song_start_time
+	# Scheduled players. Schedule for 1 second in the future.
+	_scheduled_song_start_time = AudioServer.get_absolute_time() + 1
+	print("Scheduled song starting at ", _scheduled_song_start_time)
+	$SongScheduled.play_scheduled(_scheduled_song_start_time)
+	$MetronomeScheduled.start(_scheduled_song_start_time)
+	_scheduled_song_time = _scheduled_song_start_time
 	
+	# Non-scheduled players. Wait 1 second, then start playing.
 	await get_tree().create_timer(1).timeout
-	
 	var sys_time = Time.get_ticks_usec() / 1000000.0
 	$Song.play()
 	$Metronome.start(sys_time)
@@ -31,19 +45,23 @@ func _process(_delta: float) -> void:
 	var abs_time = AudioServer.get_absolute_time()
 	var game_time = Time.get_ticks_usec() / 1000000.0
 	
-	$Control/VBoxContainer/TimeLabels/TicksLabel.text = "Game Time: %.4f" % game_time
-	$Control/VBoxContainer/TimeLabels/AbsTimeLabel.text = "Audio Time: %.4f" % abs_time
+	# Show the new game/audio times.
+	game_time_label.text = "Game Time: %.4f" % game_time
+	audio_time_label.text = "Audio Time: %.4f" % abs_time
 	
+	# Schedule the next song loop manually.
 	if abs_time > _scheduled_song_time:
-		_scheduled_song_time += 60 / 130.0 * 32
+		var song_length = 60 / bpm * song_length_beats
+		var next_song_loop = ceil((abs_time + 0.001 - _scheduled_song_start_time) / song_length)
+		_scheduled_song_time = _scheduled_song_start_time + next_song_loop * song_length
 		$SongScheduled.play_scheduled(_scheduled_song_time)
 
 
 func _update_max_fps(max_fps: int) -> void:
 	Engine.max_fps = max_fps
 	ProjectSettings.set("application/run/max_fps", max_fps)
-	$Control/VBoxContainer/MaxFps/CenterContainer/HSlider.value = max_fps
-	$Control/VBoxContainer/MaxFps/SpinBox.value = max_fps
+	max_fps_slider.value = max_fps
+	max_fps_spinbox.value = max_fps
 
 
 func _on_max_fps_h_slider_value_changed(value: float) -> void:

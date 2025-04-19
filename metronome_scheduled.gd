@@ -11,6 +11,8 @@ func _process(_delta: float) -> void:
 	if not _running:
 		return
 	
+	# Once the currently scheduled tick has started, begin scheduling the next
+	# one.
 	var curr_time = AudioServer.get_absolute_time()
 	if curr_time > _scheduled_time:
 		var beat_time = 60 / bpm

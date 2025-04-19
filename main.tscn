@@ -19,8 +19,12 @@ corner_radius_bottom_right = 3
 corner_radius_bottom_left = 3
 corner_detail = 5
 
-[node name="Main" type="Node2D"]
+[node name="Main" type="Node2D" node_paths=PackedStringArray("max_fps_slider", "max_fps_spinbox", "game_time_label", "audio_time_label")]
 script = ExtResource("1_ig7tw")
+max_fps_slider = NodePath("Control/VBoxContainer/HBoxContainer/VBoxContainer/MaxFps/CenterContainer/HSlider")
+max_fps_spinbox = NodePath("Control/VBoxContainer/HBoxContainer/VBoxContainer/MaxFps/SpinBox")
+game_time_label = NodePath("Control/VBoxContainer/HBoxContainer/TimeLabels/GameTimeLabel")
+audio_time_label = NodePath("Control/VBoxContainer/HBoxContainer/TimeLabels/AudioTimeLabel")
 
 [node name="Song" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("2_1bvp3")
@@ -50,7 +54,7 @@ offset_bottom = 648.0
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
-theme_override_constants/separation = 20
+theme_override_constants/separation = 30
 
 [node name="PanelContainer" type="PanelContainer" parent="Control/VBoxContainer"]
 layout_mode = 2
@@ -73,25 +77,33 @@ With play_scheduled():
 Try lowering the \"Max FPS\" and toggling the \"Use play_scheduled()\" button!"
 autowrap_mode = 2
 
-[node name="UsePlayScheduled" type="HBoxContainer" parent="Control/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Control/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 119
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="UsePlayScheduled" type="HBoxContainer" parent="Control/VBoxContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="CheckButton" type="CheckButton" parent="Control/VBoxContainer/UsePlayScheduled"]
+[node name="CheckButton" type="CheckButton" parent="Control/VBoxContainer/HBoxContainer/VBoxContainer/UsePlayScheduled"]
 layout_mode = 2
 text = "Use play_scheduled()"
 
-[node name="MaxFps" type="HBoxContainer" parent="Control/VBoxContainer"]
+[node name="MaxFps" type="HBoxContainer" parent="Control/VBoxContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="Label" type="Label" parent="Control/VBoxContainer/MaxFps"]
+[node name="Label" type="Label" parent="Control/VBoxContainer/HBoxContainer/VBoxContainer/MaxFps"]
 layout_mode = 2
 text = "Max FPS"
 
-[node name="CenterContainer" type="CenterContainer" parent="Control/VBoxContainer/MaxFps"]
+[node name="CenterContainer" type="CenterContainer" parent="Control/VBoxContainer/HBoxContainer/VBoxContainer/MaxFps"]
 layout_mode = 2
 
-[node name="HSlider" type="HSlider" parent="Control/VBoxContainer/MaxFps/CenterContainer"]
+[node name="HSlider" type="HSlider" parent="Control/VBoxContainer/HBoxContainer/VBoxContainer/MaxFps/CenterContainer"]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 min_value = 10.0
@@ -99,42 +111,42 @@ max_value = 1000.0
 value = 200.0
 exp_edit = true
 
-[node name="SpinBox" type="SpinBox" parent="Control/VBoxContainer/MaxFps"]
+[node name="SpinBox" type="SpinBox" parent="Control/VBoxContainer/HBoxContainer/VBoxContainer/MaxFps"]
 layout_mode = 2
 min_value = 10.0
 max_value = 1000.0
 value = 200.0
 
-[node name="Volume" type="HBoxContainer" parent="Control/VBoxContainer"]
+[node name="Volume" type="HBoxContainer" parent="Control/VBoxContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="Label" type="Label" parent="Control/VBoxContainer/Volume"]
+[node name="Label" type="Label" parent="Control/VBoxContainer/HBoxContainer/VBoxContainer/Volume"]
 layout_mode = 2
 text = "Volume"
 
-[node name="CenterContainer" type="CenterContainer" parent="Control/VBoxContainer/Volume"]
+[node name="CenterContainer" type="CenterContainer" parent="Control/VBoxContainer/HBoxContainer/VBoxContainer/Volume"]
 layout_mode = 2
 
-[node name="HSlider" type="HSlider" parent="Control/VBoxContainer/Volume/CenterContainer"]
+[node name="HSlider" type="HSlider" parent="Control/VBoxContainer/HBoxContainer/VBoxContainer/Volume/CenterContainer"]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 max_value = 2.0
 step = 0.1
 value = 1.0
 
-[node name="TimeLabels" type="VBoxContainer" parent="Control/VBoxContainer"]
+[node name="TimeLabels" type="VBoxContainer" parent="Control/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 
-[node name="TicksLabel" type="Label" parent="Control/VBoxContainer/TimeLabels"]
+[node name="GameTimeLabel" type="Label" parent="Control/VBoxContainer/HBoxContainer/TimeLabels"]
 layout_mode = 2
 text = "Game Time: 0"
 
-[node name="AbsTimeLabel" type="Label" parent="Control/VBoxContainer/TimeLabels"]
+[node name="AudioTimeLabel" type="Label" parent="Control/VBoxContainer/HBoxContainer/TimeLabels"]
 layout_mode = 2
 text = "Audio Time: 0"
 
-[connection signal="toggled" from="Control/VBoxContainer/UsePlayScheduled/CheckButton" to="." method="_on_use_play_scheduled_check_button_toggled"]
-[connection signal="value_changed" from="Control/VBoxContainer/MaxFps/CenterContainer/HSlider" to="." method="_on_max_fps_h_slider_value_changed"]
-[connection signal="value_changed" from="Control/VBoxContainer/MaxFps/SpinBox" to="." method="_on_max_fps_spin_box_value_changed"]
-[connection signal="value_changed" from="Control/VBoxContainer/Volume/CenterContainer/HSlider" to="." method="_on_volume_h_slider_value_changed"]
+[connection signal="toggled" from="Control/VBoxContainer/HBoxContainer/VBoxContainer/UsePlayScheduled/CheckButton" to="." method="_on_use_play_scheduled_check_button_toggled"]
+[connection signal="value_changed" from="Control/VBoxContainer/HBoxContainer/VBoxContainer/MaxFps/CenterContainer/HSlider" to="." method="_on_max_fps_h_slider_value_changed"]
+[connection signal="value_changed" from="Control/VBoxContainer/HBoxContainer/VBoxContainer/MaxFps/SpinBox" to="." method="_on_max_fps_spin_box_value_changed"]
+[connection signal="value_changed" from="Control/VBoxContainer/HBoxContainer/VBoxContainer/Volume/CenterContainer/HSlider" to="." method="_on_volume_h_slider_value_changed"]
