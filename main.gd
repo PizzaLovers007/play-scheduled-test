@@ -8,7 +8,6 @@ var _tween: Tween
 var _scheduled_song_time: float
 
 
-# Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	_update_max_fps(200)
 	
@@ -28,13 +27,11 @@ func _ready() -> void:
 	$Metronome.start(sys_time)
 
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	var abs_time = AudioServer.get_absolute_time()
 	if abs_time > _scheduled_song_time:
 		_scheduled_song_time += 60 / 130.0 * 32
 		$SongScheduled.play_scheduled(_scheduled_song_time)
-	pass
 
 
 func _update_max_fps(max_fps: int) -> void:
