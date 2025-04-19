@@ -13,6 +13,7 @@ func _process(_delta: float) -> void:
 	
 	# Play the metronome tick once it is time to play it. Note that since the
 	# song loop is not perfect, the metronome will eventually drift out of sync.
+	# Additionally, the metronome ticks are tied to the framerate of the game.
 	var curr_time = Time.get_ticks_usec() / 1000000.0
 	if curr_time >= _next_tick_time:
 		play()

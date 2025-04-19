@@ -63,11 +63,11 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_7mycd")
 [node name="DescriptionLabel" type="Label" parent="Control/VBoxContainer/PanelContainer"]
 custom_minimum_size = Vector2(900, 0)
 layout_mode = 2
-text = "Welcome to the play() vs play_scheduled() demo!
+text = "This demo showcases the difference between play() and play_scheduled() by playing a looping song with a metronome.
 
 With play():
 - Metronome ticks can only happen on drawn frames, so low FPS can cause ticks to play very out of sync.
-- Looping songs can eventually drift over time as song files may not be cut on the exact audio frame (as is the case here).
+- Looping songs can eventually drift out of sync as song files may not be cut on the exact audio frame (as is the case here).
 
 With play_scheduled():
 - Metronome ticks can play consistently regardless of the FPS.
