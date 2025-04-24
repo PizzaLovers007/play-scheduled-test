@@ -11,10 +11,11 @@ config_version=5
 [application]
 
 config/name="Scheduled Metronome Demo"
+config/description="A demo showcasing scheduled audio. Plays a song on loop with a metronome."
 run/main_scene="uid://b3scmm5r6a23q"
 config/features=PackedStringArray("4.5", "Forward Plus")
 run/max_fps=200
-config/icon="res://icon.svg"
+config/icon="uid://cbj2pph8lw003"
 
 [audio]
 
